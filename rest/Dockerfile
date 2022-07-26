@@ -4,7 +4,7 @@ WORKDIR /opt/
 ADD go.mod ./
 COPY ./src ./src
 RUN go mod download && \
-    go build -o /opt/main /opt/src/main.go
+    GOARCH=amd64 GOOS=linux go build -o /opt/main /opt/src/main.go
 
 FROM alpine:latest
 COPY --from=builder /opt/main /opt/main
