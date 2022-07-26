@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -13,6 +14,19 @@ type Ping struct {
 }
 
 func pingHandler(w http.ResponseWriter, r *http.Request) {
+	url := os.Getenv("URL")
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatalf("OH NO %v!", err)
+	}
+	defer resp.Body.Close()
+
+	byteArray, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("OH NO %v!", err)
+	}
+	log.Printf("AAAAAAAAAAAA %v \n", string(byteArray))
+
 	ping := Ping{http.StatusOK, "ok"}
 
 	res, err := json.Marshal(ping)
