@@ -1,11 +1,18 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+
+	"google.golang.org/api/idtoken"
+)
+
+var (
+	audience = "https://service-eosuztwy4a-uc.a.run.app"
 )
 
 type Ping struct {
@@ -15,7 +22,13 @@ type Ping struct {
 
 func pingHandler(w http.ResponseWriter, r *http.Request) {
 	url := os.Getenv("URL")
-	resp, err := http.Get(url)
+	ctx := context.Background()
+	client, err := idtoken.NewClient(ctx, audience)
+	if err != nil {
+		log.Fatalf("OH NO %v!", err)
+	}
+
+	resp, err := client.Get(url)
 	if err != nil {
 		log.Fatalf("OH NO %v!", err)
 	}
