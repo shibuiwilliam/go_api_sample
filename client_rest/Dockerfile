@@ -2,6 +2,7 @@ FROM golang:latest AS builder
 
 WORKDIR /opt/
 ADD go.mod ./
+ADD go.sum ./
 COPY ./src ./src
 RUN go mod download && \
     go build -o /opt/main /opt/src/main.go
