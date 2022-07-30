@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -13,18 +12,19 @@ type Ping struct {
 }
 
 func pingHandler(w http.ResponseWriter, r *http.Request) {
-	ping := Ping{http.StatusOK, "ok"}
+	w.WriteHeader(http.StatusOK)
+	// ping := Ping{http.StatusOK, "ok"}
 
-	res, err := json.Marshal(ping)
+	// res, err := json.Marshal(ping)
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	log.Println("OK; GREAT!")
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+	// log.Println("OK; GREAT!")
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(res)
+	// w.Header().Set("Content-Type", "application/json")
+	// w.Write(res)
 }
 
 func main() {
