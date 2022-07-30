@@ -1,9 +1,14 @@
 package main
 
 import (
-	"log"
+	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
+	"golang.org/x/sync/errgroup"
 )
 
 type Ping struct {
@@ -29,9 +34,24 @@ func pingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
 	port := os.Getenv("PORT")
-	http.HandleFunc("/ping", pingHandler)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatal(err)
+	httpPort := fmt.Sprintf(":%d", port)
+	router := mux.NewRouter().PathPrefix("/v1").Subrouter()
+	router.HandleFunc("/ping", pingHandler).Methods("GET", "POST")
+	server := &http.Server{
+		Handler: router,
+		Addr:    httpPort,
 	}
+	eg, ctx := errgroup.WithContext(ctx)
+
+	eg.Go(func() error {
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			return err
+		}
+		return nil
+	})
 }
