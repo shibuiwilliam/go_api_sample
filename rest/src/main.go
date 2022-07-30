@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/mux"
-	"golang.org/x/sync/errgroup"
 )
 
 type Ping struct {
@@ -46,12 +46,7 @@ func main() {
 		Handler: router,
 		Addr:    httpPort,
 	}
-	eg, ctx := errgroup.WithContext(ctx)
-
-	eg.Go(func() error {
-		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			return err
-		}
-		return nil
-	})
+	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Fatal(err)
+	}
 }
