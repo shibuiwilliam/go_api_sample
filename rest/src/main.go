@@ -39,7 +39,9 @@ func main() {
 	defer cancel()
 
 	port := os.Getenv("PORT")
-	httpPort := fmt.Sprintf(":%d", port)
+	httpPort := fmt.Sprintf(":%v", port)
+	log.Printf("port: %v", httpPort)
+
 	router := mux.NewRouter().PathPrefix("/v1").Subrouter()
 	router.HandleFunc("/ping", pingHandler).Methods("GET", "POST")
 	server := &http.Server{
