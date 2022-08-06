@@ -36,6 +36,11 @@ func pingHandler(w http.ResponseWriter, r *http.Request) {
 	// w.Write(res)
 }
 
+func pingErrorHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("AAAAAAAAAAAAAAAAAAAAAA")
+	http.Error(w, errors.New("AAAAAAAAAAAAA").Error(), http.StatusInternalServerError)
+}
+
 func main() {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
@@ -47,6 +52,7 @@ func main() {
 
 	router := mux.NewRouter().PathPrefix("/v1").Subrouter()
 	router.HandleFunc("/ping", pingHandler).Methods("GET", "POST")
+	router.HandleFunc("/pingE", pingErrorHandler).Methods("GET", "POST")
 	server := &http.Server{
 		Handler: router,
 		Addr:    httpPort,
